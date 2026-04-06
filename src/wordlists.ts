@@ -15,7 +15,7 @@ export const ABBREVIATION_MAP: Record<string, string> = {
   vsf: 'vai se fuder',
   vtnc: 'vai tomar no cu',
   tnc: 'tomar no cu',
-  pnc: 'puta que no cariu',
+  pnc: 'pau no cu',
   fdse: 'foda-se',
   mlk: 'moleque',
   arrombad: 'arrombado',
@@ -27,13 +27,38 @@ export const ABBREVIATION_MAP: Record<string, string> = {
   bqt: 'boquete',
   srrc: 'siririca',
   goz: 'gozar',
-  dlç: 'delicia',
   gts: 'gostosa',
   gtso: 'gostoso',
   xvd: 'xvideos',
   xvi: 'xvideos',
   prnhb: 'pornhub',
   urac: 'urach',
+  xxt: 'xoxota',
+  sfd: 'safado',
+  sfda: 'safada',
+  vgb: 'vagabundo',
+  crn: 'corno',
+  fdd: 'fodido',
+  bctuda: 'bucetuda',
+  rabt: 'rabeta',
+  fdnd: 'fodendo',
+  kng: 'quenga',
+  tzao: 'tesao',
+  ptnh: 'putinha',
+  piroq: 'piroca',
+  prq: 'piroca',
+  cuz: 'cuzao',
+  cz: 'cuzao',
+  gls: 'gulosa',
+  chp: 'chupar',
+  cnh: 'cunhete',
+  dp: 'dupla penetracao',
+  peit: 'peitos',
+  peitd: 'peituda',
+  raba: 'bunda',
+  xrc: 'xereca',
+  xib: 'xibiu',
+  pz: 'pauzao',
 };
 
 /** Palavras SEMPRE bloqueadas, independente do contexto. */
@@ -47,6 +72,8 @@ export const HARD_BLOCKED: string[] = [
   'vagabunda', 'vagabundo',
   'arrombado', 'arrombada', 'arrombadas',
   'cuzao', 'cuzona',
+  'lesbica', 'sapata',
+  'gazela', 'tchola', 'biba', 'mona', 'bixa',
   'fdp', 'filho da puta',
   'desgraca', 'desgracado', 'desgracada',
   'retardado', 'retardada',
@@ -66,6 +93,8 @@ export const HARD_BLOCKED: string[] = [
   'nfsw', '+18',
   'phub', 'pornh',
   'bronha', 'brnha', 'lisinha',
+  'xxt', 'crn', 'fdd', 'rabt', 'pnt', 'gls', 'chp', 'cnh',
+  'raba', 'pz', 'dlc',
   'brasileirinhas',
 
   // ── Conteudo sexual explicito ──
@@ -92,6 +121,9 @@ export const HARD_BLOCKED: string[] = [
   'toque intimo', 'descarga',
   'peitinho', 'teta', 'milf', 'gilf',
   'pepeca', 'xibiu', 'grelo', 'brioco', 'toba',
+  'corno', 'cornudo', 'cornuda',
+  'rabeta', 'gulosa', 'cunhete',
+  'bunda', 'pauzao', 'fodido',
 
   // ── Pedofilia / grooming ──
   'pedo', 'p3do', 'epstein',
@@ -100,7 +132,9 @@ export const HARD_BLOCKED: string[] = [
   // ── Atrizes porno BR ──
   'bruna surfistinha', 'andressa urach', 'elisa sanches',
   'mia linz', 'rita cadillac', 'vivi fernandes',
-  'fernanda campos', 'suzy cortez',
+  'fernanda campos', 'suzy cortez', 'marcia imperator',
+  'pamela pantera', 'martina oliveira', 'kinechan', 'aline faria',
+  'emme white', 'amaya takayo', 'geovanna paes', 'fabiane thompson',
 
   // ── Atrizes porno internacionais ──
   'mia khalifa', 'lana rhoades', 'riley reid', 'sasha grey',
@@ -244,6 +278,8 @@ export const CONTEXT_SENSITIVE: string[] = [
   // Movidos de abbreviation warnings (contexto inocente comum)
   'gostosa', 'gostoso',  // "comida gostosa", "dia gostoso"
   'delicia',              // "que delicia de bolo"
+  'dp',                 // "dp do prédio", "delegacia de polícia"
+  'dupla penetracao',
 ];
 
 /** Emojis SEMPRE bloqueados (inequivocamente ofensivos). */
@@ -324,4 +360,8 @@ export const SELF_EXPRESSION_PATTERNS: RegExp[] = [
   /\bpau\s+pra\b/i,
   /\bcacete[\s,!.]+\b/i,    // exclamacao isolada
   /\bque\s+pica\b/i,        // "que legal" regional
+  // Padroes inocentes para pinto/dp (v2.1)
+  /\bpinto\s+de\b/i,        // "pinto de ovo"
+  /\beu\s+pinto\b/i,        // "eu pinto paredes"
+  /\bdp\s+d[oe]\b/i,        // "dp do prédio"
 ];
