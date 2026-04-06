@@ -1,14 +1,22 @@
-# ToxiBR
+# ToxiBR - Moderacao de chat open source
 
-Biblioteca de moderação de conteúdo para português brasileiro. Filtro client-side com wordlist 200+ termos, detecção context-aware (auto-expressão vs insulto dirigido), normalização anti-bypass (leetspeak, homoglyphs, acentos, zero-width chars) e bloqueio de links/telefones. Leve, sem dependências, < 1ms por mensagem.
+Biblioteca open source de moderacao de conteudo para portugues brasileiro. Filtra mensagens toxicas em tempo real, direto no client-side, sem depender de API externa.
 
-## Instalação
+## Por que usar?
+
+- **Zero dependencias** — nada de SDK pesado, roda em qualquer lugar
+- **Rapido** — menos de 1ms por mensagem
+- **Anti-bypass** — normaliza leetspeak, homoglyphs, acentos, zero-width chars, abreviacoes BR
+- **Context-aware** — entende a diferenca entre "eu me sinto um lixo" e "voce e um lixo"
+- **Open source** — qualquer um pode contribuir com novas palavras e melhorias
+
+## Instalacao
 
 ```bash
 npm install toxibr
 ```
 
-## Uso rápido
+## Uso rapido
 
 ```ts
 import { filterContent } from 'toxibr';
@@ -21,7 +29,7 @@ if (!result.allowed) {
 }
 ```
 
-## Uso avançado
+## Uso avancado
 
 ```ts
 import { createFilter } from 'toxibr';
@@ -37,49 +45,63 @@ const filter = createFilter({
 const result = filter('mensagem aqui');
 ```
 
-## Camadas de filtro
+## O que ele filtra?
 
 | Camada | O que bloqueia | Exemplo |
 |--------|---------------|---------|
-| **Links** | URLs e domínios | `https://...`, `site.com`, `.br` |
-| **Telefone** | Números BR (9+ dígitos) | `(21) 99470-9426` |
-| **Só dígitos** | Mensagem apenas numérica | `"9"`, `"21"` |
-| **Hard-block** | 200+ termos sempre proibidos | Slurs, sexual, violência, sites pornô |
-| **Context-aware** | Termos que dependem da intenção | `"eu me sinto um lixo"` OK, `"você é um lixo"` BLOQUEADO |
+| **Links** | URLs e dominios | `https://...`, `site.com`, `.br` |
+| **Telefone** | Numeros BR (9+ digitos) | `(21) 99470-9426` |
+| **So digitos** | Mensagem apenas numerica | `"9"`, `"21"` |
+| **Hard-block** | 300+ termos sempre proibidos | Slurs, sexual, violencia, sites porno |
+| **Context-aware** | Termos que dependem da intencao | `"eu me sinto um lixo"` OK, `"voce e um lixo"` BLOQUEADO |
 
-## Normalização anti-bypass
+## Normalizacao anti-bypass
 
-Antes de checar a wordlist, o texto é normalizado para evitar truques:
+Antes de checar a wordlist, o texto passa por normalizacao para pegar tentativas de burlar o filtro:
 
-- Leetspeak: `3stupr0` → `estupro`
-- Acentos: `viàdo` → `viado`
-- Chars repetidos: `viiaaado` → `viado`
-- Zero-width chars: `vi​ado` → `viado`
-- Homoglyphs cirílicos: `viаdо` → `viado`
-- Pontos/traços: `p.u.t.a` → `puta`
-- Abreviações BR: `ppk` → `pepeca`, `krl` → `caralho`
+| Tecnica | Antes | Depois |
+|---------|-------|--------|
+| Leetspeak | `3stupr0` | `estupro` |
+| Acentos | `viado` | `viado` |
+| Chars repetidos | `viiaaado` | `viado` |
+| Zero-width chars | `vi ado` | `viado` |
+| Homoglyphs cirilicos | `viado` | `viado` |
+| Pontos/tracos | `p.u.t.a` | `puta` |
+| Abreviacoes BR | `ppk`, `krl` | `pepeca`, `caralho` |
 
-## Context-aware
+## Context-aware: auto-expressao vs insulto
 
-Palavras como "lixo", "idiota", "burro" são comuns em contextos de saúde mental:
+Palavras como "lixo", "idiota", "burro" sao comuns em contextos de saude mental. O filtro entende a diferenca:
 
 ```ts
-filterContent('eu me sinto um lixo');   // { allowed: true }
-filterContent('você é um lixo');         // { allowed: false, reason: 'directed_insult' }
+filterContent('eu me sinto um lixo');   // { allowed: true }  — auto-expressao
+filterContent('voce e um lixo');         // { allowed: false } — insulto dirigido
 ```
 
-## Exportações
+## Exportacoes
 
 ```ts
 import {
-  filterContent,    // filtro default (zero config)
-  createFilter,     // cria filtro customizado
-  normalize,        // normaliza texto (útil para debug)
-  HARD_BLOCKED,     // lista de palavras hard-blocked
-  CONTEXT_SENSITIVE, // lista de palavras context-sensitive
+  filterContent,         // filtro default (zero config)
+  createFilter,          // cria filtro customizado
+  normalize,             // normaliza texto (util para debug)
+  HARD_BLOCKED,          // lista de palavras hard-blocked
+  CONTEXT_SENSITIVE,     // lista de palavras context-sensitive
+  DIRECTED_PATTERNS,     // regex de fala dirigida (voce, seu, tu)
+  SELF_EXPRESSION_PATTERNS, // regex de auto-expressao (eu, me sinto)
+  ABBREVIATION_MAP,      // mapa de abreviacoes BR
 } from 'toxibr';
 ```
 
-## Licença
+## Contribuindo
+
+Quer adicionar uma palavra ou melhorar o filtro? Leia o [CONTRIBUTING.md](CONTRIBUTING.md) para saber como.
+
+```bash
+npm test          # roda os testes
+npm run validate  # verifica duplicatas nas wordlists
+```
+
+## Licenca
 
 MIT
