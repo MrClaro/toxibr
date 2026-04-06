@@ -32,22 +32,27 @@ export default function Terminal({ result }: TerminalProps) {
     setSelectedIndex(null)
   }, [result])
 
-  // Scan each word individually + n-grams (2-3 word phrases) for compound matches
+  // Scan each word individually + exact n-grams for compound phrase matches
   const wordScans = useMemo<WordScan[]>(() => {
     if (!result) return []
     const tokens = result.input.split(/(\s+)/).filter(t => t.trim())
     const ignoreReasons = ['digits_only', 'phone']
 
-    // First, find which token indices are part of a blocked n-gram
+    // Find which token indices are part of a blocked n-gram (exact match only)
     const ngramBlocked = new Map<number, WordScan>()
 
-    for (let n = 4; n >= 2; n--) {
+    // Check n-grams of size 2, 3, 4 — only mark if the matched phrase
+    // has the same word count as the n-gram window
+    for (let n = 2; n <= 4; n++) {
       for (let i = 0; i <= tokens.length - n; i++) {
+        if (ngramBlocked.has(i)) continue // already matched by a previous n-gram
         const phrase = tokens.slice(i, i + n).join(' ')
         const res = scanWord(phrase)
-        if (!res.allowed && !ignoreReasons.includes(res.reason as string)) {
-          for (let j = i; j < i + n; j++) {
-            if (!ngramBlocked.has(j)) {
+        if (!res.allowed && !ignoreReasons.includes(res.reason as string) && res.matched) {
+          // Only mark if the matched phrase word count matches the n-gram size
+          const matchedWordCount = res.matched.split(/\s+/).length
+          if (matchedWordCount >= 2 && matchedWordCount <= n) {
+            for (let j = i; j < i + n; j++) {
               ngramBlocked.set(j, {
                 word: phrase,
                 allowed: false,
