@@ -1,0 +1,37 @@
+{
+  "name": "toxibr",
+  "version": "1.0.0",
+  "description": "Biblioteca de moderação de conteúdo para português brasileiro. Filtro com wordlist 200+ termos, detecção context-aware, normalização anti-bypass e bloqueio de links/telefones.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "content-filter",
+    "moderation",
+    "profanity",
+    "portuguese",
+    "brazilian",
+    "pt-br",
+    "nsfw",
+    "toxicity",
+    "wordlist",
+    "filter"
+  ],
+  "author": "Diaum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/horacio3m/toxibr"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.4.0"
+  }
+}
