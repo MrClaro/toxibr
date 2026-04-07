@@ -8,11 +8,11 @@ Obrigado por querer contribuir! Este guia explica como adicionar palavras, abrev
 
 Abra `src/wordlists.ts` e identifique onde a palavra se encaixa:
 
-| Lista | Quando usar | Exemplo |
-|---|---|---|
-| `HARD_BLOCKED` | Palavra **sempre** tóxica, sem contexto inocente | `estupro`, `pedofilo` |
-| `CONTEXT_SENSITIVE` | Tóxica quando **dirigida a alguém**, mas OK em auto-expressão | `idiota`, `burro` |
-| `ABBREVIATION_MAP` | Abreviação BR que expande para uma palavra já bloqueada | `ppk` → `pepeca` |
+| Lista               | Quando usar                                                   | Exemplo               |
+| ------------------- | ------------------------------------------------------------- | --------------------- |
+| `HARD_BLOCKED`      | Palavra **sempre** tóxica, sem contexto inocente              | `estupro`, `pedofilo` |
+| `CONTEXT_SENSITIVE` | Tóxica quando **dirigida a alguém**, mas OK em auto-expressão | `idiota`, `burro`     |
+| `ABBREVIATION_MAP`  | Abreviação BR que expande para uma palavra já bloqueada       | `ppk` → `pepeca`      |
 
 ### 2. Regras para adicionar
 
