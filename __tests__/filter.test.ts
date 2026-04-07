@@ -26,14 +26,51 @@ describe('normalize', () => {
   it('replaces cyrillic homoglyphs', () => {
     expect(normalize('vi\u0430d\u043E')).toContain('viado');
   });
+
+  it('replaces Latin Extended-A homoglyphs', () => {
+    // ł → l, đ → d, ı → i
+    expect(normalize('\u0142ixo')).toContain('lixo');
+    expect(normalize('\u0111oente')).toContain('doente');
+    expect(normalize('v\u0131ado')).toContain('viado');
+  });
+
+  it('replaces Latin Extended-B homoglyphs', () => {
+    // ƒ → f, ƶ → z, ƙ → k
+    expect(normalize('\u0192oda')).toContain('foda');
+    expect(normalize('\u01B6oneira')).toContain('zoneira');
+    expect(normalize('\u0199aralho')).toContain('karalho');
+  });
+
+  it('replaces IPA / Latin Extended letter forms used in bypass', () => {
+    // ɑ → a, ɡ → g, ɵ → o, ɛ → e
+    expect(normalize('vi\u0251do')).toContain('viado');
+    expect(normalize('\u0261ato')).toContain('gato');
+    expect(normalize('b\u0275ba')).toContain('boba');
+    expect(normalize('m\u025Brda')).toContain('merda');
+  });
+
+  it('blocks bypass with Latin Extended homoglyphs', () => {
+    // End-to-end: dotless i + Latin alpha should still be caught
+    expect(filterContent('v\u0131\u0251do').allowed).toBe(false);
+    // Script g + barred o
+    expect(filterContent('ɡɵzar').allowed).toBe(false);
+  });
 });
 
 // ─── Hard-blocked words ──────────────────────────────────────────────────────
 
 describe('hard-blocked words', () => {
-  const blocked = ['punheteiro', 'estupro', 'viado', 'arrombado', 'fdp', 'buceta', 'pedofilo'];
+  const blocked = [
+    'punheteiro',
+    'estupro',
+    'viado',
+    'arrombado',
+    'fdp',
+    'buceta',
+    'pedofilo',
+  ];
 
-  blocked.forEach((word) => {
+  blocked.forEach(word => {
     it(`blocks "${word}"`, () => {
       const result = filterContent(`mensagem com ${word} aqui`);
       expect(result.allowed).toBe(false);
@@ -50,9 +87,12 @@ describe('hard-blocked words', () => {
 // ─── New slurs added in v2 ───────────────────────────────────────────────────
 
 describe('hard-blocked — new slurs (v2)', () => {
-  const newSlurs = ['lesbica', 'sapata', 'gazela', 'tchola', 'biba', 'mona', 'bixa'];
+  const newSlurs = [
+    'lesbica', 'sapata',
+    'gazela', 'tchola', 'biba', 'mona', 'bixa',
+  ];
 
-  newSlurs.forEach((word) => {
+  newSlurs.forEach(word => {
     it(`blocks "${word}"`, () => {
       const result = filterContent(`mensagem com ${word} aqui`);
       expect(result.allowed).toBe(false);
@@ -76,7 +116,7 @@ describe('hard-blocked — new BR actresses (v2)', () => {
     'fabiane thompson',
   ];
 
-  newActresses.forEach((name) => {
+  newActresses.forEach(name => {
     it(`blocks "${name}"`, () => {
       const result = filterContent(`quero ver ${name} agora`);
       expect(result.allowed).toBe(false);
@@ -118,8 +158,7 @@ describe('bypass prevention', () => {
 describe('BR abbreviation blocking', () => {
   it('blocks ppk', () => expect(filterContent('ppk').allowed).toBe(false));
   it('blocks pqp', () => expect(filterContent('pqp').allowed).toBe(false));
-  it('allows krl (context-sensitive, expands to caralho)', () =>
-    expect(filterContent('krl').allowed).toBe(true));
+  it('allows krl (context-sensitive, expands to caralho)', () => expect(filterContent('krl').allowed).toBe(true));
   it('blocks "seu krl" (directed)', () => expect(filterContent('seu krl').allowed).toBe(false));
   it('blocks gzr', () => expect(filterContent('gzr').allowed).toBe(false));
   it('blocks bct', () => expect(filterContent('bct').allowed).toBe(false));
@@ -131,35 +170,14 @@ describe('BR abbreviation blocking', () => {
 
 describe('BR abbreviation blocking — new (v2)', () => {
   const newAbbrevs = [
-    'xxt',
-    'sfd',
-    'sfda',
-    'vgb',
-    'crn',
-    'fdd',
-    'bctuda',
-    'rabt',
-    'fdnd',
-    'kng',
-    'tzao',
-    'ptnh',
-    'piroq',
-    'prq',
-    'pnt',
-    'cuz',
-    'cz',
-    'gls',
-    'chp',
-    'cnh',
-    'peit',
-    'peitd',
-    'raba',
-    'xrc',
-    'xib',
-    'pz',
+    'xxt', 'sfd', 'sfda', 'vgb', 'crn', 'fdd', 'bctuda', 'rabt',
+    'fdnd', 'kng', 'tzao', 'ptnh', 'piroq', 'prq', 'pnt',
+    'cuz', 'cz', 'gls', 'chp', 'cnh',
+    'peit', 'peitd', 'raba',
+    'xrc', 'xib', 'pz',
   ];
 
-  newAbbrevs.forEach((abbrev) => {
+  newAbbrevs.forEach(abbrev => {
     it(`blocks "${abbrev}"`, () => {
       expect(filterContent(abbrev).allowed).toBe(false);
     });
@@ -243,21 +261,16 @@ describe('pau/rola/cacete as context-sensitive', () => {
   it('allows "pau de selfie"', () => expect(filterContent('pau de selfie').allowed).toBe(true));
   it('allows "cacete, que dia"', () => expect(filterContent('cacete, que dia').allowed).toBe(true));
   it('blocks "seu pau" (directed)', () => expect(filterContent('seu pau').allowed).toBe(false));
-  it('blocks "toma no cu" (directed)', () =>
-    expect(filterContent('toma no cu').allowed).toBe(false));
-  it('blocks "voce e um caralho" (directed)', () =>
-    expect(filterContent('voce e um caralho').allowed).toBe(false));
+  it('blocks "toma no cu" (directed)', () => expect(filterContent('toma no cu').allowed).toBe(false));
+  it('blocks "voce e um caralho" (directed)', () => expect(filterContent('voce e um caralho').allowed).toBe(false));
 });
 
 describe('gostosa/gostoso/delicia as context-sensitive', () => {
   it('allows "comida gostosa"', () => expect(filterContent('comida gostosa').allowed).toBe(true));
   it('allows "dia gostoso"', () => expect(filterContent('dia gostoso').allowed).toBe(true));
-  it('allows "que delicia de bolo"', () =>
-    expect(filterContent('que delicia de bolo').allowed).toBe(true));
-  it('blocks "sua gostosa" (directed)', () =>
-    expect(filterContent('sua gostosa').allowed).toBe(false));
-  it('blocks "voce e uma delicia" (directed)', () =>
-    expect(filterContent('voce e uma delicia').allowed).toBe(false));
+  it('allows "que delicia de bolo"', () => expect(filterContent('que delicia de bolo').allowed).toBe(true));
+  it('blocks "sua gostosa" (directed)', () => expect(filterContent('sua gostosa').allowed).toBe(false));
+  it('blocks "voce e uma delicia" (directed)', () => expect(filterContent('voce e uma delicia').allowed).toBe(false));
 });
 
 // ─── Phone number blocking ───────────────────────────────────────────────────
@@ -275,7 +288,7 @@ describe('phone number blocking', () => {
     'Meu numero é 11987654321',
   ];
 
-  phones.forEach((input) => {
+  phones.forEach(input => {
     it(`blocks phone: "${input}"`, () => {
       const result = filterContent(input);
       expect(result.allowed).toBe(false);
@@ -377,7 +390,7 @@ describe('false positives — must NEVER block', () => {
     'Assassino no filme',
   ];
 
-  safe.forEach((phrase) => {
+  safe.forEach(phrase => {
     it(`allows: "${phrase}"`, () => {
       expect(filterContent(phrase).allowed).toBe(true);
     });
@@ -399,7 +412,7 @@ describe('false positives — new v2 additions must not break', () => {
     'eu pinto a parede amanha',
   ];
 
-  safe.forEach((phrase) => {
+  safe.forEach(phrase => {
     it(`allows: "${phrase}"`, () => {
       expect(filterContent(phrase).allowed).toBe(true);
     });
